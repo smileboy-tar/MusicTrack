@@ -16,16 +16,27 @@ struct Song {
 
 class MusicTrack {
 private:
-	Song* playlist;
-	int playlist_size;
+	// songs in this music track
+	Song* playlists;
 	
-	static int playlist_counter;
+	// size of playlists
+	int playlists_size;
 
+	// to keep track of how many music tracks were created
+	static int musicTracks;
+
+	// longest song in playlists
+	static Song& longestSong;
 public:
 	MusicTrack();
 	// MusicTrack(int);
 	MusicTrack(const MusicTrack&);
 	~MusicTrack();
+	
+	/* 
+		display songs in playlists
+	*/
+	void display(const char*);
 	
 	/* 
 		default constructor that dynamically allocates memory 
@@ -59,7 +70,7 @@ public:
 		static function returning the longest song and its 
 		title among all playlists.
 	*/
-	static Song& longestSongInAllPlaylists(const Song*);
+	static const Song& longestSongInAllPlaylists();
 
 	/* 
 		friend function to compare two playlists

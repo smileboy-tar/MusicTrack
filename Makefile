@@ -1,13 +1,16 @@
 
-CXX := mingw32-g++
-BIN := MusicTrack.exe
-RM  := rm -f
+CXX   := mingw32-g++
+BIN   := MusicTrack.exe
+RM    := rm -f
+FLAGS := -W -g -O3
+UNITS := music_track.o
 
-all: music_track.o
-	$(CXX) main.cpp -o $(BIN) -g -O3 music_track.o
+
+all: $(UNITS)
+	$(CXX) main.cpp -o $(BIN) $(FLAGS) $(UNITS)
 
 music_track.o: music_track.h music_track.cpp
-	$(CXX) -c -o music_track.o music_track.cpp -g
+	$(CXX) -c -o music_track.o music_track.cpp $(FLAGS)
 
 clean:
-	$(RM) $(BIN) music_track.o
+	$(RM) $(BIN) $(UNITS)
