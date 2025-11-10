@@ -22,16 +22,19 @@ public:
 
 private:
 	// songs in this music track
-	Song* playlists;
+	Song* playlist;
 	
 	// size of playlists
-	int playlists_size;
+	int playlist_size;
+
+	// current size of playlists
+	int current_size;
 
 	// to keep track of how many music tracks were created
 	static int musicTracks;
 
 	// longest song in playlists
-	static Song& longestSong;
+	static Song longestSong;
 
 public:
 	MusicTrack();
@@ -85,12 +88,12 @@ public:
 	/* 
 		returns a new playlist with common songs between two playlists
 	*/
-	MusicTrack& operator+(const MusicTrack&);
+	MusicTrack operator+(const MusicTrack&);
 	
 	/* 
 		returns a new playlists with unique songs from the first playlist
 	*/
-	MusicTrack& operator-(const MusicTrack&);
+	MusicTrack operator-(const MusicTrack&);
 	
 	/* 
 		removed the last song in playlist
