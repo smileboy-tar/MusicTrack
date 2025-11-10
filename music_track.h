@@ -8,13 +8,18 @@
 
 
 #include <string>
+using namespace std;
 
 struct Song {
-	std::string title;
+	string title;
 	double duration;
 };
 
 class MusicTrack {
+public:
+	// name of playlist
+	string name;
+
 private:
 	// songs in this music track
 	Song* playlists;
@@ -27,16 +32,12 @@ private:
 
 	// longest song in playlists
 	static Song& longestSong;
+
 public:
 	MusicTrack();
 	// MusicTrack(int);
 	MusicTrack(const MusicTrack&);
 	~MusicTrack();
-	
-	/* 
-		display songs in playlists
-	*/
-	void display(const char*);
 	
 	/* 
 		default constructor that dynamically allocates memory 
@@ -56,10 +57,9 @@ public:
 	void removePlaylist();
 	
 	/*
-		TBD ...
 		copy constructor for deep copying playlists.
 	*/
-	void copyPlaylist();
+	void copyPlaylist(MusicTrack&);
 	
 	/*
 		static function to return total playlists created.
@@ -95,13 +95,12 @@ public:
 	/* 
 		removed the last song in playlist
 	*/
-	void operator--();
+	void operator--(int);
 	
 	/* 
 		friend function to display all songs
 	*/
-	friend std::ostream& operator<<(std::ostream&, MusicTrack&);
+	friend ostream& operator<<(ostream&, MusicTrack&);
 };
-
 
 #endif

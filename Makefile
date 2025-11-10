@@ -1,6 +1,6 @@
 
-CXX   := mingw32-g++
-BIN   := MusicTrack.exe
+CXX   := g++
+BIN   := MusicTrack
 RM    := rm -f
 FLAGS := -W -g -O3
 UNITS := music_track.o

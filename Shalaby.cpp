@@ -63,9 +63,10 @@ class MusicTrack
         delete[] playlist;
         cout << "Playlist array has been deleted"<< endl;
     }
-    void createPlaylist()
+    void createPlaylist(int size)
     {
-        playlist = new Song[playlist_size];
+		playlist_size = size;
+        playlist = new Song[size];
     }
 };
 
