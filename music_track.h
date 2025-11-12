@@ -19,6 +19,9 @@ class MusicTrack {
 public:
 	// name of playlist
 	string name;
+	
+	// if this play was created previouslly by the program
+	bool valid;
 
 private:
 	// songs in this music track

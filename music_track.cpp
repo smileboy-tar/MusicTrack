@@ -15,36 +15,31 @@ MusicTrack::MusicTrack() {
 	current_size = 0;
 	playlist = NULL;
 
-	longestSong.title = "";
-	longestSong.duration = 0;
+	// longestSong.title = "";
+	// longestSong.duration = 0;
 }
 
 MusicTrack::MusicTrack(const MusicTrack &obj) {
-
-	playlist_size = obj.playlist_size;
-	playlist = new Song[playlist_size];
-
-	for(int i = 0; i < playlist_size; i++) {
-		playlist[i].title = obj.playlist[i].title;
-		playlist[i].duration = obj.playlist[i].duration;
-	}
 }
 
-
 MusicTrack::~MusicTrack() {
+	removePlaylist();
 }
 
 void MusicTrack::createPlaylist(int size) {
 	
-	current_size = 0;
-	playlist_size = size;
 	playlist = new Song[size];
+	playlist_size = size;
+	current_size = 0;
+	valid = true;
+	
+	musicTracks++;
 }
 
 
 void MusicTrack::addNewSongs(int size, const Song* songs) {
 	
-	if( size + current_size >= playlist_size ) {
+	if(size + current_size >= playlist_size) {
 		
 		// create a resized list
 		Song* backlist = new Song[playlist_size + size];
@@ -78,10 +73,15 @@ void MusicTrack::addNewSongs(int size, const Song* songs) {
 void MusicTrack::removePlaylist() {
 	if(playlist) {
 		delete[] playlist;
+		playlist = NULL;
+		
 		current_size = 0;
 		playlist_size = 0;
 
-		cout << "Playlist was removed successfully" << endl;
+		cout << "Playlist \'" << name << "\' was removed successfully" << endl;
+		
+		musicTracks--;
+		valid = false;
 	}
 }
 
@@ -91,14 +91,16 @@ void MusicTrack::copyPlaylist(MusicTrack& track) {
 	track.removePlaylist();
 	
 	// deep copy
+	track.playlist = new Song[playlist_size];
 	track.playlist_size = playlist_size;
 	track.current_size = current_size;
-	track.playlist = new Song[playlist_size];
 	
 	for(int i = 0; i < current_size; i++) {
 		track.playlist[i].title = playlist[i].title;
 		track.playlist[i].duration = playlist[i].duration;
 	}
+	
+	musicTracks++;
 }
 
 int MusicTrack::totalPlaylistsCreated() {
@@ -112,21 +114,31 @@ const Song& MusicTrack::longestSongInAllPlaylists() {
 MusicTrack MusicTrack::operator+(const MusicTrack& obj) {
 
 	MusicTrack common;
+	common.name = "Common Songs";
+	
+	// worst case-senario if all the songs were common
 	common.createPlaylist( this->playlist_size + obj.playlist_size );
 
+	bool found;
+	
 	for(int i = 0; i < playlist_size; i++) {
 
+		found = false;
 		for(int k = 0; k < obj.playlist_size; k++) {
 			
 			if(this->playlist[i].title == obj.playlist[k].title) {
 				
-				// add this song to playlist
-				common.playlist[common.current_size].title = this->playlist[k].title;
-				common.playlist[common.current_size].duration = this->playlist[k].duration;
-				common.current_size++;
-
+				found = true;
 				break;
 			}
+			
+		}
+		
+		if(found) {
+			// add this song to playlist
+			common.playlist[common.current_size].title = this->playlist[i].title;
+			common.playlist[common.current_size].duration = this->playlist[i].duration;
+			common.current_size++;
 		}
 	}
 
@@ -136,20 +148,31 @@ MusicTrack MusicTrack::operator+(const MusicTrack& obj) {
 MusicTrack MusicTrack::operator-(const MusicTrack & obj) {
 
 	MusicTrack unique;
+	unique.name = "Unique Songs";
+	
+	// worst case-senario if all the songs were unique
 	unique.createPlaylist( this->playlist_size + obj.playlist_size );
 
+	bool found;
+	
 	for(int i = 0; i < playlist_size; i++) {
 
+		found = false;
 		for(int k = 0; k < obj.playlist_size; k++) {
 			
-			if(this->playlist[i].title != obj.playlist[k].title) {
+			if(this->playlist[i].title == obj.playlist[k].title) {
 				
-				// add this song to playlist
-				unique.playlist[unique.current_size].title = this->playlist[k].title;
-				unique.playlist[unique.current_size].duration = this->playlist[k].duration;
-				unique.current_size++;
+				found = true;
 				break;
 			}
+			
+		}
+		
+		if(!found) {
+			// add this song to playlist
+			unique.playlist[unique.current_size].title = this->playlist[i].title;
+			unique.playlist[unique.current_size].duration = this->playlist[i].duration;
+			unique.current_size++;
 		}
 	}
 
@@ -157,26 +180,31 @@ MusicTrack MusicTrack::operator-(const MusicTrack & obj) {
 }
 
 void MusicTrack::operator--(int index) {
-	current_size--;
-	if(current_size < 0) {
-		current_size=0; 
+	if(current_size > 0) {
+		cout << "Removing last song..." << endl;
+		current_size--;
+	} else {
+		cout << "No songs to remove!" << endl;
 	}
 }
 
 bool operator>=(const MusicTrack& m1, const MusicTrack& m2) {
-	if(m1.current_size >= m2.current_size)
-		return true;
-	return false;
+	return (m1.current_size >= m2.current_size);
 }
 
 void MusicTrack::operator[](int index) {
-	cout << "Playing song " << playlist[index].title << "..." << endl;
+	cout << "Playing song \'" << playlist[index].title << "\'..." << endl;
 }
 
 ostream& operator<<(ostream& os, MusicTrack& track) {
 	
+	if(track.current_size == 0) {
+		os << "\t" << "*No songs" << endl;
+		return os;
+	}
+	
 	for(int i = 0; i < track.current_size; i++) {
-		os << "\t" << setw(2) << i << ". ";
+		os << "\t" << setw(4) << i << ". ";
 		os << track.playlist[i].title << endl;
 	}
 

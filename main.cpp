@@ -54,6 +54,29 @@ int main() {
 		
 		cout << PROMPT;
 		cin >> (int&)input;
+		cin.ignore();
+
+		// simple checking
+		switch(input) {
+			case SELECT:
+			case INFO:
+			case LONG:
+				if(mt_index != 0) break;
+			case SONGS:
+			case CURRENT:
+			case ADD:
+			case REMOVE:
+			case COPY:
+			case PLAY:
+			case POP:
+				if(curMT) break;
+				
+				if(mt_index != 0)
+					cout << "Select a Music Track!" << endl;
+				else
+					cout << "Please create a Music Track first!" << endl;
+				continue;
+		}
 		
 		switch(input) {
 			case MENU: 		// display menu
@@ -70,19 +93,31 @@ int main() {
 				}
 
 				cout << "Select playlist by index" << endl;
-				for(int i = 0; i < size; i++) {
-					cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
+				for(int i = 0; i < MAX_MT_SIZE; i++) {
+					if(tracks[i].valid)
+						cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
 				}
 
-				int index;
 				cout << PROMPT;
+				
+				int index;
 				cin >> index;
+				
+				if(index > mt_index) {
+					cout << "index too large" << endl;
+					break;
+				}
+
+				if(tracks[index].valid) {
+					cout << "Music track selected is not valid" << endl;
+					break;
+				}
 
 				curMT = tracks + index;
-				cout << "Current music track was switched" << endl;
+				cout << "Current music track was switched to \'" << tracks[index].name << "\'" << endl;
 			} break;
 
-			case CURRENT:
+			case CURRENT:	// display the current playlist
 			{
 				cout << "  " << curMT->name << endl;
 			} break;
@@ -92,7 +127,8 @@ int main() {
 				int size;
 
 				cout << "Enter the name of playlist: ";
-				cin >> tracks[mt_index].name;
+				// cin >> tracks[mt_index].name;
+				getline(cin, tracks[mt_index].name);
 
 				cout << "Enter the size of playlist: ";
 				cin >> size;
@@ -100,7 +136,7 @@ int main() {
 				tracks[mt_index].createPlaylist(size);
 
 				if(curMT == NULL) {
-					cout << "Current music track is set to index " << mt_index << endl;
+					cout << "Current music track is set to \'" << tracks[mt_index].name << "\'" << endl;
 					curMT = tracks + mt_index;
 				}
 				mt_index++;
@@ -108,11 +144,6 @@ int main() {
 			
 			case ADD: 		// add songs to playlist
 			{
-				if(!curMT) { 
-					cout << "Please select a music track" << endl;
-					break;
-				}
-
 				int nsongs;
 				cout << "Enter number of songs: ";
 				cin >> nsongs;
@@ -121,7 +152,9 @@ int main() {
 				for(int i = 0; i < nsongs; i++) {
 
 					cout << "Song " << i << " Title: ";
-					cin >> songs[i].title;
+					// cin >> songs[i].title;
+					cin.ignore();
+					getline(cin, songs[i].title);
 
 					cout << "Song " << i << " Duration: ";
 					cin >> songs[i].duration;
@@ -134,11 +167,6 @@ int main() {
 			
 			case REMOVE: 	// remove a playlist
 			{
-				if(!curMT) { 
-					cout << "Please select a music track" << endl;
-					break;
-				}
-
 				cout << "Removing current playlist!" << endl;
 				curMT->removePlaylist();
 				curMT = NULL;
@@ -146,6 +174,9 @@ int main() {
 			
 			case COPY: 		// copy a playlist
 			{
+				cout << "Name of the new copy: ";
+				cin >> tracks[mt_index].name;
+				
 				cout << "Copying current music track to index " << mt_index << endl;
 				curMT->copyPlaylist( tracks[mt_index] );
 				mt_index++;
@@ -162,15 +193,22 @@ int main() {
 				const Song& song = MusicTrack::longestSongInAllPlaylists();
 
 				cout << "Longest song: " << endl;
-				cout << "Title: " << song.title << endl;
-				cout << "Duration: " << song.duration << endl;
+				cout << "\tTitle: " << song.title << endl;
+				cout << "\tDuration: " << song.duration << endl;
 			} break;
 			
 			case CMP: 		// compare two playlists
 			{
-				cout << "Comparing current playlist with: ";
+				if(MusicTrack::totalPlaylistsCreated() < 2) {
+					cout << "At least two Music Tracks need to be created for this operation" << endl;
+					break;
+				}
+				
+				cout << "Comparing current playlist with: " << endl;
 				for(int i = 0; i < mt_index; i++) {
-					cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
+					if(curMT->name != tracks[i].name && tracks[i].valid) {
+						cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
+					}
 				}
 
 				int index;
@@ -187,28 +225,37 @@ int main() {
 			
 			case PLAY: 		// play a song by index
 			{
-				cout << "Select Song to play: ";
+				cout << "Select Song to play: " << endl;
 				cout << (*curMT);
-
+				cout << PROMPT;
+				
 				int index;
 				cin >> index;
 
 				// just like that
-				curMT[index];
+				(*curMT)[index];
 			} break;
 			
 			case COMMON: 	// display common songs
 			{
-				for(int i = 0; i < mt_index; i++) {
-					cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
+				if(MusicTrack::totalPlaylistsCreated() < 2) {
+					cout << "At least two Music Tracks need to be created for this operation" << endl;
+					break;
 				}
-
-				cout << "Commong songs with: ";
+				
+				cout << "Commong songs with: " << endl;
+				for(int i = 0; i < mt_index; i++) {
+					if(curMT->name != tracks[i].name && tracks[i].valid) {
+						cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
+					}
+				}
+				cout << PROMPT;
 
 				int index;
 				cin >> index;
 
-				cout << "Getting common songs with current music track and track " << index << endl;
+				cout << "Getting common songs with current music track and track \'" << tracks[index].name;
+				cout << "\'" << endl;
 				
 				MusicTrack common = ( *curMT + tracks[index] );
 				cout << common;
@@ -216,11 +263,18 @@ int main() {
 			
 			case UNIQUE: 	// display unique songs
 			{
+				if(MusicTrack::totalPlaylistsCreated() < 2) {
+					cout << "At least two Music Tracks need to be created for this operation" << endl;
+					break;
+				}
+				
+				cout << "Unique songs with: " << endl;
 				for(int i = 0; i < mt_index; i++) {
-					cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
+					if(curMT->name != tracks[i].name && tracks[i].valid) {
+						cout << '\t' << setw(2) << i << ". " << tracks[i].name << endl;
+					}
 				}
 
-				cout << "Unique songs with: ";
 
 				int index;
 				cin >> index;
@@ -233,7 +287,6 @@ int main() {
 			
 			case POP: 		// remove last song
 			{
-				cout << "Removing last song of current music track" << endl;
 				(*curMT)--;
 			} break;
 			
@@ -245,17 +298,17 @@ int main() {
 			
 			case EXIT:  	// exit
 			{
+				// freeing up
+				for(int i = 0; i < MAX_MT_SIZE; i++) {
+					tracks[i].removePlaylist();
+				}
+				
 				cout << "Exiting..." << endl;
 				done = 1;
 			} continue;
 			
 			default: cout << "Invaild Input" << endl;
 		}
-	}
-	
-	// freeing up
-	for(int i = 0; i < MAX_MT_SIZE; i++) {
-		tracks[i].removePlaylist();
 	}
 
 	// delete[] tracks;
@@ -269,7 +322,7 @@ void PrintMenu() {
 	
 	cout << endl << LINE << "Menu" << LINE << endl;
 	cout << setw(2) << (int)MenuInput::MENU    << ". " << "Show menu"                       << endl;
-	cout << setw(2) << (int)MenuInput::SELECT  << ". " << "Select Current MusicTrack"       << endl;
+	cout << setw(2) << (int)MenuInput::SELECT  << ". " << "Select MusicTrack"               << endl;
 	cout << setw(2) << (int)MenuInput::CURRENT << ". " << "Current MusicTrack"              << endl;
 	cout << setw(2) << (int)MenuInput::CREATE  << ". " << "Create a new playlist"           << endl;
 	cout << setw(2) << (int)MenuInput::ADD     << ". " << "Add songs to playlist"           << endl;
