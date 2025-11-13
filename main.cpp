@@ -6,7 +6,7 @@
 // 	1. Haytham Ashraf Ali        - 20246070
 //	2. Mahmoud Mohammed Shalaby  - 20246102
 
-// ***NO AI TOOLS WAS INVOLVED AT ALL!***
+// ***NO AI TOOLS WERE INVOLVED AT ALL!***
 
 #include <iostream>
 #include <iomanip>
