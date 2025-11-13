@@ -3,11 +3,8 @@
 // Assignment 1 - Group G8
 
 // Contributers:
-// 	1. Haytham Ashraf Ali     - 20246070
-//	2. Mahmoud Mohammed Ahmed - 20246102
-
-// This project is hosted on github:
-// 	https://github.com/smileboy-tar/MusicTrack.git
+// 	1. Haytham Ashraf Ali        - 20246070
+//	2. Mahmoud Mohammed Shalaby  - 20246102
 
 // ***NO AI TOOLS WAS INVOLVED AT ALL!***
 
@@ -116,7 +113,7 @@ int main() {
 					break;
 				}
 
-				if(tracks[index].valid) {
+				if(!tracks[index].valid) {
 					cout << "Music track selected is not valid" << endl;
 					break;
 				}
