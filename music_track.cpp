@@ -14,9 +14,6 @@ MusicTrack::MusicTrack() {
 	playlist_size = 0;
 	current_size = 0;
 	playlist = NULL;
-
-	// longestSong.title = "";
-	// longestSong.duration = 0;
 }
 
 MusicTrack::MusicTrack(const MusicTrack &obj) {

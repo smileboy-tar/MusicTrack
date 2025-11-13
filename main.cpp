@@ -1,5 +1,15 @@
 
 
+// Assignment 1 - Group G8
+
+// Contributers:
+// 	1. Haytham Ashraf Ali     - 20246070
+//	2. Mahmoud Mohammed Ahmed - 20246102
+
+// This project is hosted on github:
+// 	https://github.com/smileboy-tar/MusicTrack.git
+
+// ***NO AI TOOLS WAS INVOLVED AT ALL!***
 
 #include <iostream>
 #include <iomanip>
@@ -32,20 +42,18 @@ void PrintMenu();
 
 int main() {
 	
-	// in this case we only have two music tracks
+	bool done = false;
+
+	// maximume number of music tracks allowed
 	const int MAX_MT_SIZE = 10;
 
-	// keep track of music tracks
 	int mt_index = 0;
 
-	// music tracks
+	// tracks
 	MusicTrack tracks[MAX_MT_SIZE];
 
-	// Pointer to the current selected music track
+	// current selected music track in 'tracks'
 	MusicTrack* curMT = NULL;
-
-	// program is done
-	bool done = false;
 	
 	PrintMenu();
 	while(!done) {
